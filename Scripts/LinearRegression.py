@@ -17,11 +17,11 @@ class LinearRegressionGD():
         for epoch in range(epochs):
             yhat = self(X)
             error = y - yhat
-            weights_grad = -2 * np.dot(X.T, error)
-            bias_grad = -2 * np.sum(error, axis=0)
+            dweights = -2 * np.dot(X.T, error)
+            dbias = -2 * np.sum(error, axis=0)
 
-            self.weights -= lr * weights_grad
-            self.bias -= lr * bias_grad
+            self.weights -= lr * dweights
+            self.bias -= lr * dbias
             
             if plot:
                 if epoch % eval_epoch == 0:
