@@ -15,18 +15,18 @@ class LinearRegressionGD():
         losses = list()
         for epoch in range(epochs):
 
-            WeightGrad = -2 * X.T @ (y - X @ self.weights - self.bias)
-            BiasGrad = -2 * (y - X @ self.weights - self.bias)
+            weightsGrad = -2 * X.T @ (y - X @ self.weights - self.bias)
+            biasGrad = -2 * torch.sum(y - X @ self.weights - self.bias)
 
-            self.weights -= lr * WeightGrad
-            self.bias -= lr * BiasGrad
+            self.weights -= lr * weightsGrad
+            self.bias -= lr * biasGrad
             
             if plot:
                 if epoch % eval_epoch == 0:
                     loss_epoch = torch.sum((y - self(X)) ** 2)
                     losses.append(loss_epoch.item())
         
-            if plot:
-                plt.figure()
-                plt.plot(range(list(epochs//eval_epoch)), losses, label="loss")
-                plt.show()
+        if plot:
+            plt.figure()
+            plt.plot(list(range(epochs//eval_epoch)), losses, label="loss")
+            plt.show(block=False)

@@ -1,4 +1,3 @@
-- Linear regression
 - Logistic regression
 - Tree
 - Random forest
