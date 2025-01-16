@@ -1,3 +1,3 @@
 # BasicML
 
-Implementation from scratch of machine learning algorithms
+Implementation of machine learning algorithms
