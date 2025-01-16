@@ -2,14 +2,16 @@ import sys
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.datasets import make_regression
 
 sys.path.append(os.path.abspath("Desktop/BasicML"))
 from Scripts.LinearRegression import LinearRegressionGD
 
+np.random.seed(1337)
+
 SIGMA = 1.0
 
-X = np.arange(start=-5.0, stop=5.0, step=0.1).reshape(-1, 1)
-y = 2 * X + 1 + np.random.normal(loc=0, scale=SIGMA**2, size=X.shape)
+X, y = make_regression(n_samples=100, n_features=1, noise=5, random_state=1337)
 
 model = LinearRegressionGD(in_features=X.shape[-1], out_features=1)
 model.train(X, y, lr = 1e-3, epochs = 20, eval_epoch = 2)

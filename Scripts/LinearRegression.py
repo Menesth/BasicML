@@ -13,6 +13,7 @@ class LinearRegressionGD():
     
     def train(self, X, y, lr = 1e-3, epochs = 100, eval_epoch = 10, plot = True):
         losses = list()
+        y = np.expand_dims(y, axis=1)
         for epoch in range(epochs):
             yhat = self(X)
             error = y - yhat

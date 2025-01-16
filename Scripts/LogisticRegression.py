@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-class LinearRegressionGD():
+class LogisticRegressionGD():
     
     def __init__(self, in_features, out_features):
         self.weights = np.random.normal(0.0, 0.1, size=(in_features, out_features))
@@ -13,18 +13,23 @@ class LinearRegressionGD():
     
     def train(self, X, y, lr = 1e-3, epochs = 100, eval_epoch = 10, plot = True):
         losses = list()
+        y = np.expand_dims(y, axis=1)
+    
         for epoch in range(epochs):
-            yhat = self(X)
-            error = y - yhat
-            weights_grad = -2 * np.dot(X.T, error)
-            bias_grad = -2 * np.sum(error, axis=0)
+            logits = self(X)
+            sigmoid = 1 / 1 + np.exp(logits)
 
-            self.weights -= lr * weights_grad
-            self.bias -= lr * bias_grad
+            dsigmoid = np.sum(y * (1 - sigmoid) - (1 - y) * sigmoid)
+            dlogits = logits * (1 - logits) * dsigmoid
+            dweights = X * dlogits
+            dbias = dlogits
+
+            self.weights -= lr * 
+            self.bias -= lr * 
             
             if plot:
                 if epoch % eval_epoch == 0:
-                    loss_epoch = np.sum(error ** 2)
+                    loss_epoch = None
                     losses.append(loss_epoch.item())
         
         if plot:
