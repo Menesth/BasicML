@@ -1,0 +1,5 @@
+- Linear regression
+- Logistic regression
+- Tree
+- Random forest
+- Gradient boosting
