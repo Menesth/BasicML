@@ -40,4 +40,6 @@ class LogisticRegressionGD():
         if plot:
             plt.figure()
             plt.plot(list(range(epochs//eval_epoch)), losses, label="loss")
+            plt.xlabel("epochs")
+            plt.legend()
             plt.show(block=False)

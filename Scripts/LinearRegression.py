@@ -6,7 +6,6 @@ class LinearRegressionGD():
     def __init__(self, in_features, out_features):
         self.weights = np.random.normal(0.0, 0.1, size=(in_features, out_features))
         self.bias = np.random.uniform(-0.1, 0.1, size=(out_features,))
-
     
     def __call__(self, X):
         return np.dot(X, self.weights) + self.bias
@@ -31,4 +30,6 @@ class LinearRegressionGD():
         if plot:
             plt.figure()
             plt.plot(list(range(epochs//eval_epoch)), losses, label="loss")
+            plt.xlabel("epochs")
+            plt.legend()
             plt.show(block=False)

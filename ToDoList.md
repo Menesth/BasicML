@@ -1,4 +1,4 @@
-- Logistic regression
+- SVM: add kernels
 - Tree
 - Random forest
 - Gradient boosting
