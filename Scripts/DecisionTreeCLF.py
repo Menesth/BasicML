@@ -14,10 +14,11 @@ class Node():
 
 class DecisionTree:
 
-    def __init__(self, min_sample_split=2, max_depth=10, Nfeatures=None):
+    def __init__(self, min_sample_split=2, max_depth=2, Nfeatures=None, criterion="entropy"):
         self.min_sample_split=min_sample_split
         self.max_depth=max_depth
         self.Nfeatures=Nfeatures
+        self.criterion = criterion
         self.root=None
 
     def train(self, X, y):
@@ -38,6 +39,7 @@ class DecisionTree:
         left_split, right_split = self._split(X[:, best_feature], best_threshold)
         left_child = self._growtree(X[left_split, :], y, depth + 1)
         right_child = self._growtree(X[right_split, :], y, depth + 1)
+
         return Node(feature=best_feature, threshold=best_threshold, left=left_child, right=right_child)
         
     def _majvote(self, y):
@@ -62,19 +64,26 @@ class DecisionTree:
         return split_threshold, split_idx
 
     def _information_gain(self, X, y, threshold):
-        parent_entropy = self._entropy(y)
+        parent_impurity = self._impurity(y)
         left_child, right_child = self._split(X, threshold)
+
         if (len(left_child) == 0 or len(right_child) == 0):
             return 0
 
         left_weight, right_weight = len(left_child) / len(y), len(right_child) / len(y)
-        left_entropy = left_weight * self._entropy(left_child)
-        right_entropy = right_weight * self._entropy(right_child)
-        return parent_entropy - (left_entropy + right_entropy)
+        left_impurity = left_weight * self._impurity(y[left_child])
+        right_impurity = right_weight * self._impurity(y[right_child])
 
-    def _entropy(self, y):
-        probabilites = np.bincount(y) / len(y)
-        return -np.sum([p * np.log2(p) for p in probabilites if p > 0])
+        return parent_impurity - (left_impurity + right_impurity)
+
+    def _impurity(self, y):
+        _, counts = np.unique(y, return_counts=True)
+        probabilities = counts / len(y)
+
+        if self.criterion == "gini":
+            return 1 - np.sum(probabilities**2)
+        else:
+            return -np.sum([p * np.log2(p) for p in probabilities if p > 0])
 
     def _split(self, X, threshold):
         left_child = np.argwhere(X <= threshold).flatten()
@@ -90,3 +99,29 @@ class DecisionTree:
         if x[node.feature] <= node.threshold:
             return self._traverse_tree(x, node.left)
         return self._traverse_tree(x, node.right)
+
+    def prune(self, X_val, y_val):
+            self.root = self._prune_tree(self.root, X_val, y_val)
+
+    def _prune_tree(self, node, X, y, validation_data):
+        if node.is_leaf_node():
+            return node
+
+        if node.left:
+            node.left = self._prune_tree(node.left, X, y, validation_data)
+        if node.right:
+            node.right = self._prune_tree(node.right, X, y, validation_data)
+
+        if node.left.is_leaf_node() and node.right.is_leaf_node():
+            left_predictions = self._traverse_tree(X, node.left)
+            right_predictions = self._traverse_tree(X, node.right)
+            merged_predictions = np.concatenate([left_predictions, right_predictions])
+
+            leaf_value = self._majvote(y)
+            error_with_children = np.mean(merged_predictions != validation_data)
+            error_with_leaf = np.mean([leaf_value] * len(validation_data) != validation_data)
+
+            if error_with_leaf <= error_with_children:
+                return Node(val=leaf_value)
+
+        return node

@@ -9,13 +9,14 @@ sys.path.append(os.path.abspath("Desktop/BasicML"))
 from Scripts.DecisionTreeCLF import DecisionTree
 
 np.random.seed(1337)
+criterion = "gini" #"entropy"
 
 X, y = make_classification(n_samples=100, n_features=5, n_redundant=0, n_classes=2,
                            n_clusters_per_class=1, class_sep=1, random_state=1337)
 
 Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=1337)
 
-model = DecisionTree()
+model = DecisionTree(criterion=criterion)
 model.train(Xtr, ytr)
 
 yhat = model.predict(Xte)
